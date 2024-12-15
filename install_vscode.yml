@@ -1,0 +1,59 @@
+---
+- name: Install VS Code on Linux servers
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Install dependencies on CentOS
+      when: ansible_distribution == "CentOS"
+      yum:
+        name:
+          - libX11
+          - GConf2
+        state: present
+
+    - name: Add the Microsoft GPG key on CentOS
+      when: ansible_distribution == "CentOS"
+      rpm_key:
+        key: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add the VS Code repository on CentOS
+      when: ansible_distribution == "CentOS"
+      yum_repository:
+        name: vscode
+        description: Visual Studio Code
+        baseurl: https://packages.microsoft.com/yumrepos/vscode
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Install Visual Studio Code on CentOS
+      when: ansible_distribution == "CentOS"
+      yum:
+        name: code
+        state: present
+
+    - name: Add the Microsoft GPG key on Ubuntu
+      when: ansible_distribution == "Ubuntu"
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add the VS Code repository on Ubuntu
+      when: ansible_distribution == "Ubuntu"
+      apt_repository:
+        repo: deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/repos/code stable main
+        state: present
+
+    - name: Update the package list on Ubuntu
+      when: ansible_distribution == "Ubuntu"
+      apt:
+        update_cache: yes
+
+    - name: Install Visual Studio Code on Ubuntu
+      when: ansible_distribution == "Ubuntu"
+      apt:
+        name: code
+        state: present

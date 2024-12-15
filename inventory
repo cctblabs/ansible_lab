@@ -7,3 +7,6 @@
 
 [file_servers]
 10.81.30.196 # EI-T001-SVP04
+
+[workstations]
+10.81.30.160 # EI-T001-UWS01
